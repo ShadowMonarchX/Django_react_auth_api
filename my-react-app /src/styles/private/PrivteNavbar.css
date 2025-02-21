@@ -1,0 +1,163 @@
+/* Navbar Styling */
+.navbar-container-main {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 30px; /* Increased padding for more space */
+  height: 80px;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.8) 100%);
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 1009;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Left Section */
+.navbar-left {
+  display: flex;
+  align-items: center;
+  gap: 40px; /* Increased gap */
+}
+
+.logo span {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #f9020e !important;
+  text-transform: uppercase;
+  letter-spacing: 10px;
+  text-shadow: 5px 4px 4px rgba(229, 9, 20, 0.6);
+  transition: transform 0.3s ease-in-out;
+}
+
+.logo span:hover {
+  transform: scale(1.1); /* Added hover effect to scale the logo */
+}
+
+/* Navbar Links */
+.nav-links-main {
+  display: flex;
+  gap: 50px; /* Increased gap for more balanced spacing */
+}
+
+.nav-links-main a {
+  color: #fff !important;
+  font-size: 1.1rem;
+  text-decoration: none;
+  transition: color 0.3s ease-in-out;
+}
+
+.nav-links-main a:hover {
+  color: #E50914;
+}
+
+.active-main {
+  color: #E50914 !important;
+  font-weight: 600;
+}
+
+/* Right Section */
+.navbar-right-main {
+  display: flex;
+  align-items: center;
+  gap: 40px; /* Increased gap for more space */
+}
+
+.search-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.search-icon {
+  position: absolute;
+  left: 10px;
+  color: #666;
+}
+
+.search-container input {
+  padding: 8px 35px;
+  background: #2a2a2a;
+  border: none;
+  border-radius: 4px;
+  color: white;
+  width: 300px; /* Increased width for a more spacious input */
+  font-size: 1rem;
+  transition: width 0.3s ease-in-out; /* Smooth expansion */
+}
+
+.search-container input:focus {
+  width: 350px; /* Expands when focused */
+}
+
+/* Navbar Icons */
+.nav-icons {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.icon-btn {
+  background: none;
+  border: none;
+  color: white;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
+  padding: 8px 12px;
+  border-radius: 4px;
+  transition: 0.3s;
+}
+
+.icon-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* Profile Dropdown */
+.profile-dropdown img {
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: transform 0.3s ease-in-out; /* Smooth hover effect */
+}
+
+.profile-dropdown img:hover {
+  transform: scale(1.1); /* Hover effect to enlarge the profile icon */
+}
+
+.profile-dropdown .dropdown-content {
+  right: 0;
+  left: auto;
+  background-color: #181818;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+  display: none; /* Hide dropdown by default */
+  transition: opacity 0.3s ease-in-out; /* Smooth transition on hover */
+}
+
+.profile-dropdown:hover .dropdown-content {
+  display: block;
+  opacity: 1; /* Show dropdown */
+}
+
+.profile-dropdown .dropdown-content a {
+  color: white;
+  padding: 10px 20px;
+  display: block;
+  font-size: 14px;
+  text-decoration: none;
+}
+
+.profile-dropdown .dropdown-content a:hover {
+  background: #E50914;
+}
+
+/* Hover Effects for the Links and Dropdown */
+.nav-links-main a:hover {
+  color: #E50914;
+}
+
+.dropdown:hover .dropdown-content {
+  display: block;
+}

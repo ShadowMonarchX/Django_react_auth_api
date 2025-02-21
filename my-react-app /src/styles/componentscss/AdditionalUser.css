@@ -1,0 +1,123 @@
+/* Hero Section */
+/* .hero-section {
+    max-width: 600px;
+    width: 100%;
+    padding: 30px;
+    background: rgba(0, 0, 0, 0.8);
+    border-radius: 45px;
+  } */
+  
+  /* Form Container */
+  .auth-container {
+    max-width: 500px;
+    margin: auto;
+    padding: 50px;
+    text-align: center;
+    background: rgba(0, 0, 0, 0.9);
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+  }
+  
+  /* Form Title */
+  .auth-form-title {
+    font-size: 28px;
+    font-weight: bold;
+    color: #fff;
+    margin-bottom: 20px;
+  }
+  
+  /* Input Fields - Each field styled separately */
+  .input-first-name {
+    width: 100%;
+    height: 45px;
+    background: #333;
+    border: none;
+    border-radius: 25px;
+    color: white;
+    padding: 10px;
+    margin-bottom: 15px;
+    font-size: 16px;
+  }
+  
+  .input-last-name {
+    width: 100%;
+    height: 45px;
+    background: #444;
+    border: none;
+    border-radius: 25px;
+    color: white;
+    padding: 10px;
+    margin-bottom: 15px;
+    font-size: 16px;
+  }
+  
+  .input-phone-number {
+    width: 100%;
+    height: 45px;
+    background: #555;
+    border: none;
+    border-radius: 25px;
+    color: white;
+    padding: 10px;
+    margin-bottom: 15px;
+    font-size: 16px;
+  }
+  
+  /* Dropdowns */
+  .selection-country {
+    width: 100%;
+    height: 45px;
+    background: #222;
+    color: white;
+    border-radius: 10px;
+    padding: 10px;
+    margin-block: 30px;
+    font-size: 16px;
+  }
+  
+  .selection-state {
+    width: 100%;
+    height: 45px;
+    background: #333;
+    color: white;
+    border-radius: 10px;
+    margin-block: 15px;
+    padding: 10px;
+    font-size: 16px;
+  }
+  
+  .selection-city {
+    width: 100%;
+    height: 45px;
+    background: #444;
+    color: white;
+    border-radius: 10px;
+    padding: 10px;
+    margin-block: 15px;
+    font-size: 16px;
+  }
+  
+  /* Button */
+  .btn-signin {
+    width: 100%;
+    background: #e50914;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 12px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+  }
+  
+  .btn-signin:hover {
+    background: #f40612;
+  }
+  
+  /* Error Message */
+  .error-message {
+    color: red;
+    font-size: 14px;
+    margin-top: 10px;
+  }
+  

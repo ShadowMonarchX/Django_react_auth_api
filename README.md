@@ -1,1 +1,2 @@
-# Django_react_auth_api
+# django-react-auth-api
+A Django backend with authentication API (login/logout) integrated with a React frontend.

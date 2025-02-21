@@ -1,0 +1,223 @@
+/* Navbar Container */
+.navbar-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  height: 70px;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.7) 100%);
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 1000;
+  border-bottom: 1px solid #2a2a2a;
+}
+
+/* YOURFLIX Logo Styling */
+.navbar-brand {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #f9020e !important;
+  text-transform: uppercase;
+  letter-spacing: 10px;
+  text-shadow: 5px 4px 4px rgba(229, 9, 20, 0.6);
+  transition: transform 0.3s ease-in-out;
+}
+
+.navbar-brand:hover {
+  transform: scale(1.1);
+}
+
+/* Navbar Links */
+.nav-links {
+  display: flex;
+  gap: 25px;
+}
+
+.nav-links a {
+  color: #fff!important;
+  font-size: 1.2rem;
+  transition: color 0.3s ease-in-out;
+  text-decoration: none;
+}
+
+.nav-links a:hover {
+  color: #e50914 !important;
+}
+
+.active {
+  color: #E50914 !important;
+  font-weight: 600;
+}
+
+/* Dropdown Menu */
+.dropdown {
+  position: relative;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background: #050505;
+  min-width: 160px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
+  z-index: 1;
+}
+
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+
+.dropdown-content a {
+  color: white;
+  padding: 12px 16px;
+  display: block;
+  font-size: 13px;
+}
+
+.dropdown-content a:hover {
+  background: #E50914;
+}
+
+/* Right Section */
+.navbar-right {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+}
+
+/* Search Container */
+.search-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.search-icon {
+  position: absolute;
+  left: 10px;
+  color: #666;
+}
+
+.search-container input {
+  padding: 8px 35px;
+  background: #2a2a2a;
+  border: none;
+  border-radius: 4px;
+  color: white;
+  width: 250px;
+}
+
+/* Navbar Icons */
+.nav-icons {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.icon-btn {
+  background: none;
+  border: none;
+  color: white;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
+  padding: 8px 12px;
+  border-radius: 4px;
+  transition: 0.3s;
+}
+
+.icon-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.notification {
+  position: relative;
+}
+
+.badge {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background: #E50914;
+  color: white;
+  padding: 2px 6px;
+  border-radius: 50%;
+  font-size: 10px;
+}
+
+/* Profile Dropdown */
+.profile-dropdown img {
+  width: 35px;
+  height: 35px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.profile-dropdown .dropdown-content {
+  right: 0;
+  left: auto;
+}
+
+/* Username Styling */
+.user-name {
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: white;
+  margin-right: 8px;
+}
+
+/* Sign In & Register Buttons */
+.btn-danger {
+  background-color: #e50914;
+  border: none;
+  padding: 7px 15px;
+  font-size: 1rem;
+  transition: background 0.3s ease-in-out;
+}
+
+.btn-danger:hover {
+  background-color: #f40612;
+}
+
+/* Navbar Collapse */
+.navbar-toggler {
+  border: none;
+}
+
+.navbar-toggler-icon {
+  background-color: white;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .navbar-container {
+    flex-direction: column;
+    height: auto;
+    padding: 10px;
+  }
+
+  .navbar-left {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .nav-links {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .navbar-right {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .search-container input {
+    width: 100%;
+  }
+  .bg-darkes{
+    --bs-bg-opacity: 1;
+    background-color:rgb(9 9 9) !important;
+}
+}

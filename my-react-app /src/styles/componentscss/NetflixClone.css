@@ -1,0 +1,241 @@
+/* Netflix Navbar */
+.netflix-navbar {
+  background: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 20.2) 100%,
+    transparent 150%
+  );
+  padding: 10px 1%;
+  position: absolute;
+  top: 8;
+  width: 100%;
+  z-index: 2;
+}
+
+.nav-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.netflix-logo {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  color: #e50914;
+  font-size: 2rem;
+  font-weight: 500;
+  text-decoration: none;
+  text-shadow: 15px 15px 15px rgba(0, 0, 0, 0.5); /* Adds a shadow effect */
+  letter-spacing: 10px; /* Increases the spacing between letters */
+}
+
+.netflix-logo svg {
+  height: 30px;
+}
+
+/* .btn-signin {
+  background: #e50914;
+  color: white;
+  padding: 7px 17px;
+  border-radius: 10px;
+  text-decoration: none;
+  font-weight: 500;
+  margin-left: 25px;
+} */
+
+.btn-register {
+  color: white;
+  padding: 7px 17px;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+/* Auth Pages Container */
+/* Auth Pages Container */
+.auth-container {
+  background: rgba(0, 0, 0, 100);
+  border-radius: 10px;
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 60px 50px;
+  text-align: center;
+}
+
+.auth-form-title {
+  color: #fff;
+  font-size: 30px;
+  margin-bottom: 35px;
+}
+
+/* Input Fields */
+.auth-form input {
+  width: 100%;
+  height: 45px;
+  background: #333;
+  border: none;
+  border-radius: 10px;
+  color: #fff;
+  padding: 25px;
+  margin-bottom: 20px;
+  font-size: 14px;
+}
+.aggrement-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  text-align: center;
+  width: 80%;
+}
+.agrement-checkbox {
+  display: flex;
+  align-items: center;
+}
+.auth-form input::placeholder {
+  color: #bbb;
+}
+.margin-bt0 {
+  margin-bottom: 5px !important;
+}
+/* Sign In Button */
+.btn-signin {
+  width: 105%;
+  background: #e50914;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  padding: 12px;
+  font-size: 16px;
+  font-weight: 700;
+  margin: 50px 0;
+  cursor: pointer;
+}
+
+.btn-signin:hover {
+  background: #f40612;
+}
+
+/* Social Login Buttons */
+.social-login {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.btn-social {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-size: 15px;
+  font-weight: bold;
+  padding: 12px;
+  border-radius: 10px;
+  cursor: pointer;
+  border: none;
+  margin: 7px;
+}
+
+.google-btn {
+  background: #fff;
+  color: #000;
+}
+
+.netflix-btn {
+  background: #fff;
+  color: #000;
+}
+
+.btn-social img {
+  height: 20px;
+}
+
+/* Remember Me & Need Help */
+.form-help {
+  display: flex;
+  justify-content: space-between;
+  color: #b3b3b3;
+  font-size: 13px;
+  margin: 10px 0;
+}
+
+.form-help a {
+  color: #b3b3b3;
+  text-decoration: none;
+}
+
+.form-signup {
+  color: #737373;
+  margin-top: 16px;
+}
+
+.form-signup a {
+  color: white;
+  text-decoration: none;
+}
+
+.form-signup a:hover {
+  text-decoration: underline;
+}
+.home {
+  /* background: linear-gradient(to bottom, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.8)),
+    url("path-to-your-hero-image.jpg") no-repeat center center/cover; */
+  height: 60vh;
+  display: flex;
+  margin: 200px;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  color: white;
+}
+
+.hero-section {
+  max-width: 800px;
+  margin: -20px;
+}
+
+.cheak {
+  width: 20px;
+  margin: 10px;
+}
+.selection-block {
+  margin: 20px;
+}
+.cheak-box-css {
+  height: 43px;
+  padding: 0px;
+  margin: 25px;
+}
+
+
+
+/* Button color red */
+.reset-btn {
+  background-color: red;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.reset-btn:hover {
+  background-color: darkred;
+}
+
+/* Style for 'Back to Sign In' link */
+.back-signin {
+  text-decoration: none;
+  color: white;
+  font-size: 14px;
+}
+
+.back-signin:hover {
+  text-decoration: underline;
+  color: lightgray;
+}

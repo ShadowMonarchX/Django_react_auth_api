@@ -1,0 +1,53 @@
+/* Root Container */
+#root {
+  max-width: 1450px;
+  margin: 0px;
+  padding: 0rem;
+  text-align: center;
+}
+
+/* Logo Styling */
+.logo {
+  height: 6rem;
+  padding: 1.5rem;
+  transition: filter 0.3s ease-in-out;
+}
+
+.logo:hover {
+  filter: drop-shadow(0 0 10px rgba(100, 108, 255, 0.7));
+}
+
+.logo.react:hover {
+  filter: drop-shadow(0 0 10px rgba(97, 218, 251, 0.7));
+}
+
+/* Logo Animation */
+@keyframes logo-spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Apply Animation Based on Motion Preferences */
+@media (prefers-reduced-motion: no-preference) {
+  a:nth-of-type(2) .logo {
+    animation: logo-spin infinite 20s linear;
+  }
+}
+
+/* Card Styling */
+.card {
+  padding: 2rem;
+  border-radius: 8px;
+  background: #f9f9f9;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Documentation Text */
+.read-the-docs {
+  color: #666;
+  font-size: 0.9rem;
+}

@@ -1,0 +1,67 @@
+/* Footer Styles */
+.footer {
+  background-color: #000 !important; /* Dark black background */
+  padding: 70px 0;
+  color: white;
+}
+
+/* Footer Links */
+.footer h5 {
+  margin-bottom: 20px;
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+.footer ul {
+  padding: 0;
+  list-style: none;
+}
+
+.footer ul li {
+  margin-bottom: 10px;
+}
+
+.footer ul li a {
+  color: #737373;
+  text-decoration: none;
+  transition: color 0.3s ease-in-out;
+}
+
+.footer ul li a:hover {
+  color: #e50914;
+  text-decoration: underline;
+}
+
+/* Footer Language Selector */
+.footer .form-select {
+  background-color: transparent;
+  color: white;
+  border: 1px solid #333;
+  width: 150px;
+  text-align: center;
+  margin-top: 10px;
+}
+
+.footer .form-select:hover {
+  border-color: #737373;
+}
+
+/* Copyright Section */
+.footer p {
+  font-size: 0.9rem;
+  color: #737373;
+  margin-top: 20px;
+  text-align: center;
+}
+
+/* Reduce Margin for Consistency */
+.mt-5 {
+  margin-top: 0rem !important;
+}
+
+/* Footer Responsive Design */
+@media (max-width: 768px) {
+  .footer {
+    padding: 50px 0;
+  }
+}
