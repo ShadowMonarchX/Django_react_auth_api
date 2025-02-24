@@ -40,17 +40,13 @@ function Login() {
         console.error("Login Error:", res.error);
         setServerError(res.error.data?.errors || { general: "Login failed" });
       } else if (res.data) {
-        if (!res.data.is_verified) {
-          navigate("/OtpUser");
-          return;
-        }
+
+        console.log("data is this data :",res.data)
 
         
-        storeToken({
-          access_token: res.data.access_token,
-          refresh_token: res.data.refresh_token,
-        });
-        dispatch(setUserToken({ access_token: res.data.access_token }));
+        storeToken(res.data);
+        localStorage.setItem("access_token", res.data.data.access_token);
+        localStorage.setItem("refresh_token", res.data.data.refresh_token);
         navigate("/Dashboard");
       }
     } catch (error) {
