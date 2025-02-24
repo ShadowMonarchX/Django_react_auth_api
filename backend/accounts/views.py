@@ -169,15 +169,22 @@ class VerifyUserEmail(GenericAPIView):
 
         
 
-class LoginUserView(GenericAPIView):
-    serializer_class=LoginSerializer
+class LoginUserView(APIView):
+    permission_classes = [AllowAny]
+
     def post(self, request):
-        try :
-            serializer= self.serializer_class(data=request.data, context={'request': request})
-            serializer.is_valid(raise_exception=True)
-            return Response(serializer.data)
-        except :
-            return Response({'message':'Acces do not Prvide Keep The Write fild Filep'},status=status.HTTP_200_OK)
+        
+        serializer = LoginSerializer(data=request.data, context={'request': request})
+
+        if serializer.is_valid():
+            return Response(
+                {
+                    'message' : 'You Are Login sucessfully.',
+                    'data' : serializer.validated_data
+                }, status=status.HTTP_200_OK)
+
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 
