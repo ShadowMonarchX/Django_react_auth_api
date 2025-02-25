@@ -1,18 +1,6 @@
 from unicodedata import name
 from django.urls import path
-from .views import (
-        RegisterView, 
-        VerifyUserEmail , 
-        LoginUserView , 
-        LogoutApiView , 
-        AdditionalUserDetailsView , 
-        CountryListView , 
-        StateListView , 
-        CityFilterView , 
-        PasswordResetConfirm,
-        SetNewPasswordView ,
-        PasswordResetRequestView
-        )
+from .views import *
 from rest_framework_simplejwt.views import (TokenRefreshView,)
 
 urlpatterns = [
@@ -27,4 +15,6 @@ urlpatterns = [
     path('countries/', CountryListView.as_view(), name='country-list'),
     path('states/', StateListView.as_view(), name='state-list'),
     path('cities/', CityFilterView.as_view(), name='city-filter'),
+    path('google/', GoogleOauthSignInview.as_view(), name='google'),
+    path('github/', NetflixOauthSignInView.as_view(), name='github')
     ]
