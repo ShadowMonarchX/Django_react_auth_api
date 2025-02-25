@@ -1,6 +1,9 @@
+from accounts.google import Google, register_social_user
+from accounts.netflix import Netflix
+from accounts.models import User,City,State,Country
+from accounts.utils import send_normal_email
 import json
 from dataclasses import field
-from accounts.models import User,City,State,Country
 from rest_framework import serializers
 from rest_framework.response import Response
 from string import ascii_lowercase, ascii_uppercase
@@ -11,7 +14,6 @@ from django.utils.encoding import smart_str, force_str, smart_bytes
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from django.contrib.sites.shortcuts import get_current_site
 from django.urls import reverse
-from .utils import send_normal_email
 from rest_framework_simplejwt.tokens import RefreshToken, TokenError
 from rest_framework_simplejwt.exceptions import TokenError, InvalidToken
 from rest_framework import status
@@ -24,23 +26,16 @@ class CitySerializer(serializers.ModelSerializer):
         model = City
         fields = '__all__'  
 
-
-
 class StateSerializer(serializers.ModelSerializer):
     country = serializers.StringRelatedField()  
     class Meta:
         model = State
         fields = ['id', 'name', 'country']
 
-
-
 class CountrySerializer(serializers.ModelSerializer):
     class Meta:
         model = Country
         fields = ['id', 'name']
-
-
-
 
 class UserRegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(max_length=68, min_length=6, write_only=True)
@@ -56,9 +51,6 @@ class UserRegisterSerializer(serializers.ModelSerializer):
             )
         return user
     
-    
-
-
 
 class AdditionalUserDetailsSerializer(serializers.ModelSerializer):
     city_id = serializers.PrimaryKeyRelatedField(
@@ -108,11 +100,6 @@ class AdditionalUserDetailsSerializer(serializers.ModelSerializer):
         }
 
 
-
-
-
-        
-
 class LoginSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(max_length=155, min_length=6)
     password = serializers.CharField(write_only=True, max_length=128)
@@ -129,7 +116,7 @@ class LoginSerializer(serializers.ModelSerializer):
 
         request = self.context.get('request')
 
-        print(request.data)
+        # print(request.data)
         user = authenticate(request, email=email, password=password)
         refresh = RefreshToken.for_user(user)
 
@@ -233,8 +220,6 @@ class SetNewPasswordSerializer(serializers.Serializer):
         except Exception as e:
             return AuthenticationFailed("link is invalid or has expired")
 
-
-    
 class LogoutUserSerializer(serializers.Serializer):
     refresh_token=serializers.CharField()
 
@@ -254,7 +239,45 @@ class LogoutUserSerializer(serializers.Serializer):
         except TokenError:
             return self.fail('bad_token')
 
-    
+class GoogleSignInSerializer(serializers.Serializer):
+    access_token=serializers.CharField(min_length=6)
 
-    
-    
+
+    def validate_access_token(self, access_token):
+        user_data=Google.validate(access_token)
+        try:
+            user_data['sub']
+            
+        except:
+            raise serializers.ValidationError("this token has expired or invalid please try again")
+        
+        if user_data['aud'] != settings.GOOGLE_CLIENT_ID:
+                raise AuthenticationFailed('Could not verify user.')
+
+        user_id=user_data['sub']
+        email=user_data['email']
+        first_name=user_data['given_name']
+        last_name=user_data['family_name']
+        provider='google'
+
+        return register_social_user(provider, email, first_name, last_name)
+
+
+class NetflixLoginSerializer(serializers.Serializer):
+    code = serializers.CharField()
+
+    def validate_code(self, code):   
+        access_token = Netflix.exchange_code_for_token(code)
+
+        if access_token:
+            user_data=Netflix.get_github_user(access_token)
+
+            full_name=user_data['name']
+            email=user_data['email']
+            names=full_name.split(" ")
+            firstName=names[1]
+            lastName=names[0]
+            provider='github'
+            return register_social_user(provider, email, firstName, lastName)
+
+        
