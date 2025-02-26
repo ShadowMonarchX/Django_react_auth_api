@@ -1,44 +1,33 @@
-import logging
 from django.core.mail import EmailMessage
-import random
 from django.conf import settings
-from .models import User, OneTimePassword
-from django.contrib.sites.shortcuts import get_current_site
-
-logger = logging.getLogger(__name__)
+from datetime import datetime, timedelta
+from django.utils.crypto import get_random_string
 
 def send_generated_otp_to_email(email, request):
     try:
-        subject = "One time passcode for Email verification"
-        otp = random.randint(100000, 999999)  
-        current_site = get_current_site(request).domain  
-        user = User.objects.get(email=email) 
-        email_body = f"Hi {user.email}, thanks for signing up on {current_site}. Please verify your email with the one-time passcode: {otp}"
-        
+        subject = "One-Time Passcode for Email Verification"
+        otp = get_random_string(6, allowed_chars='0123456789')  
+        email_body = f"Hi {email}, your OTP for email verification is: {otp}"
 
-        existing_otp = OneTimePassword.objects.filter(user=user).first()
-        
-        if existing_otp:
-            existing_otp.otp = otp
-            existing_otp.save()
-        else:
+        request.session['otp'] = otp
+        request.session['otp_email'] = email
+        request.session['otp_expiry'] = (datetime.now() + timedelta(minutes=2)).strftime("%Y-%m-%d %H:%M:%S")
 
-            otp_obj = OneTimePassword.objects.create(user=user, otp=otp)
+        # print("Session data set:")
+        # print("OTP:", request.session.get('otp'))
+        # print("Email:", request.session.get('otp_email'))
+        # print("Expiry:", request.session.get('otp_expiry'))
 
-        from_email = settings.EMAIL_HOST_USER
-        d_email = EmailMessage(subject=subject, body=email_body, from_email=from_email, to=[user.email])
-        email_sent = d_email.send() 
-        
-        if email_sent == 1:  
-            logger.info(f"OTP sent to {email} successfully.")
-        else:
-            logger.warning(f"Failed to send OTP to {email}.")
-        
-    except User.DoesNotExist:
-        logger.error(f"User with email {email} does not exist.")
+        request.session.modified = True
+        request.session.save()
+
+        email_msg = EmailMessage(subject=subject, body=email_body, from_email=settings.EMAIL_HOST_USER, to=[email])
+        email_msg.send()
+
+        return True
     except Exception as e:
-        logger.error(f"Error sending OTP to {email}: {str(e)}")
-        raise
+        print(f"Error sending OTP: {e}")
+        return False
 
 
 def send_normal_email(data):
@@ -49,3 +38,5 @@ def send_normal_email(data):
         to=[data['to_email']]
     )
     email.send()
+
+

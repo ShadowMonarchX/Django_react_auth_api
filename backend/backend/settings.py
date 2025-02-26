@@ -26,17 +26,15 @@ ALLOWED_HOSTS = []
 
 
 # Application definition
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
-    'django.contrib.sessions',
+    'django.contrib.sessions',  # Ensure sessions app is included
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'django_seed',
     'rest_framework',
-    'corsheaders', 
+    'corsheaders',
     'accounts',
     'rest_framework_simplejwt.token_blacklist',
     'rest_framework.authtoken',
@@ -62,14 +60,24 @@ DATABASES = {
 }
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    "corsheaders.middleware.CorsMiddleware",
+    'django.contrib.sessions.middleware.SessionMiddleware',  # Ensure SessionMiddleware is included
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+SESSION_ENGINE = "django.contrib.sessions.backends.db"  # Use database-backed sessions
+SESSION_COOKIE_NAME = "otp_session"  # Custom session cookie name
+SESSION_COOKIE_AGE = 120  # Session expires after 2 minutes
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True  # Session expires when the browser is closed
+SESSION_SAVE_EVERY_REQUEST = True  # Save the session on every request
+SESSION_COOKIE_SAMESITE = 'None'  # Allow cross-site requests
+SESSION_COOKIE_SECURE = False  # Set to True in production (requires HTTPS)
+SESSION_COOKIE_HTTPONLY = False  # Allow JavaScript to access the session cookie
+
 CORS_ALLOW_ALL_ORIGINS = True
 
 ROOT_URLCONF = 'backend.urls'

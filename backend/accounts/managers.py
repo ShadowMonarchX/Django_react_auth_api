@@ -8,7 +8,8 @@ class UserManager(BaseUserManager):
         try:
             validate_email(email)
         except ValidationError:
-            raise ValueError(_("please enter a valid email address"))
+            raise ValueError(_("Please enter a valid email address"))
+
     def create_user(self, email, tc, password=None, **extra_fields):
         if not email:
             raise ValueError(_("An email address is required"))
@@ -19,7 +20,6 @@ class UserManager(BaseUserManager):
         user.set_password(password)
         user.save(using=self._db)
         return user
-    
 
     def create_superuser(self, email, password, **extra_fields):
         extra_fields.setdefault("is_staff", True)
