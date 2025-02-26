@@ -1,4 +1,4 @@
-#!/Users/jenishshekhada/Desktop/Product/Django_react_auth_api/backend/venv/bin/python3.13
+#!/Users/jenishshekhada/Desktop/Product/Django_react_auth_api/backend/venv/bin/python3.12
 # -*- coding: utf-8 -*-
 import re
 import sys

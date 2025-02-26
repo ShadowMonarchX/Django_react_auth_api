@@ -1,7 +1,11 @@
-import re
+from curses.ascii import US
+
+
 from rest_framework.response import Response
 from rest_framework import status
-from accounts.models import User
+
+import re
+
 
 def RegisterValidation(request):
     user_data = request.data
@@ -29,13 +33,7 @@ def RegisterValidation(request):
             "error": "Invalid email."
         }, status=status.HTTP_400_BAD_REQUEST)
     
-    if User.objects.filter(email=email).exists():
-
-            return Response({
-                "status": "failure",
-                "message": "This email is already registered.",
-                "error": "Email already exists."
-            }, status=status.HTTP_400_BAD_REQUEST)
+   
 
 
 def AdditionalUserDetailsValidation(request):

@@ -1,105 +1,198 @@
+import email
 from accounts.models import *
 from accounts.serializers import *
 from accounts.validation import *
 from accounts.utils import send_generated_otp_to_email
-from accounts.permissions import  IsOwnerOrReadOnly 
-from ast import Expression
-import re
-from datetime import timedelta
-from django.utils import timezone
-from multiprocessing import context
+from accounts.social import register_social_user
+from accounts.permissions import  IsOwnerOrReadOnly
+
+from django.utils.http import urlsafe_base64_decode
+from django.http import JsonResponse
+from django.utils.encoding import smart_str
+from django.contrib.auth.models import AnonymousUser
+from django.contrib.auth.tokens import PasswordResetTokenGenerator
+from django.utils.http import urlsafe_base64_decode
 from django.shortcuts import render
+from django.utils.decorators import method_decorator
+
+
 from rest_framework.generics import GenericAPIView
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework.permissions import IsAuthenticated
-from django.contrib.auth import authenticate
 from rest_framework.permissions import AllowAny , IsAuthenticated
-from django.utils.http import urlsafe_base64_decode
 from rest_framework_simplejwt.tokens import RefreshToken
-from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from rest_framework_simplejwt.exceptions import InvalidToken
 from rest_framework_simplejwt.authentication import JWTAuthentication
-from django.utils.http import urlsafe_base64_decode
-from django.utils.encoding import smart_str, DjangoUnicodeDecodeError
-from django.contrib.auth.models import AnonymousUser
+from django_ratelimit.decorators import ratelimit
 
 
+
+
+from datetime import datetime
+from multiprocessing import context
 
 class RegisterView(APIView):
     permission_classes = [AllowAny]
-    serializer_class = UserRegisterSerializer
 
     def post(self, request):
         validation_error = RegisterValidation(request)
         
         if validation_error:
             return validation_error 
+        serializer = UserRegisterSerializer(data=request.data)
         
-        serializer = self.serializer_class(data=request.data)
+        if not serializer.is_valid():
+            return Response({
+                "status": "failure",
+                "message": "Invalid data provided.",
+                "error": serializer.errors
+            }, status=status.HTTP_400_BAD_REQUEST)
 
-        if serializer.is_valid():
-            try:
-                user = serializer.save()
-                send_generated_otp_to_email(user.email, request)
+        email = serializer.validated_data.get('email')
+
+        if User.objects.filter(email=email).exists():
+            return Response({
+                "status": "failure",
+                "message": "This email is already registered."
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            user = serializer.save()
+            user.is_verified = False
+            user.save()
+
+            if send_generated_otp_to_email(user.email, request):
                 return Response({
                     "status": "success",
                     "message": "OTP sent to your email for verification.",
-                    "data": serializer.data
+                    "data": {"email": user.email}
                 }, status=status.HTTP_201_CREATED)
-            
-            except Exception as e:
-
+            else:
                 return Response({
                     "status": "failure",
-                    "message": "User creation failed.",
-                    "error": str(e)
+                    "message": "Failed to send OTP."
                 }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-            
-        return Response({
-            "status": "failure",
-            "message": "Invalid data provided.",
-            "error": serializer.errors
-        }, status=status.HTTP_400_BAD_REQUEST)
+
+        except Exception as e:
+            return Response({
+                "status": "failure",
+                "message": "User creation failed.",
+                "error": str(e)
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 class VerifyUserEmail(APIView):
     permission_classes = [AllowAny]
 
     def post(self, request):
-        try:
-            passcode = request.data.get('otp')
-            
-            user_pass_obj = OneTimePassword.objects.get(otp=passcode)
-            user = user_pass_obj.user
-            otp_creation_time = user_pass_obj.created_at 
+        otp = request.data.get('otp')
+        # print(f"Received OTP: {otp}")
 
-           
-            if timezone.now() - otp_creation_time > timedelta(minutes=2):
-                return Response({'message': 'OTP expired.'}, status=status.HTTP_400_BAD_REQUEST)
-            
-            if not user.is_verified:
+        session_otp = request.session.get('otp')
+        session_email = request.session.get('otp_email')
+        otp_expiry = request.session.get('otp_expiry')
+
+        # print(f"Session OTP: {session_otp}")
+        # print(f"Session Email: {session_email}")
+        # print(f"OTP Expiry: {otp_expiry}")
+
+        if not otp or not session_otp or not session_email or not otp_expiry:
+            return Response({
+                "status": "failure",
+                "message": "Invalid OTP or session expired."
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+       
+        try:
+            otp_expiry_dt = datetime.strptime(otp_expiry, "%Y-%m-%d %H:%M:%S")
+        except ValueError:
+            return Response({
+                "status": "failure",
+                "message": "Invalid session expiry format."
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+      
+        if datetime.now() > otp_expiry_dt:
+            return Response({
+                "status": "failure",
+                "message": "OTP expired."
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+      
+        if otp == session_otp:
+            try:
+                user = User.objects.get(email=session_email)
                 user.is_verified = True
-                user.verify_byemail = True  
                 user.save()
 
-                refresh = RefreshToken.for_user(user)
+               
+                request.session.pop('otp', None)
+                request.session.pop('otp_email', None)
+                request.session.pop('otp_expiry', None)
+                request.session.save() 
 
+               
+                refresh = RefreshToken.for_user(user)
                 return Response({
-                    'message': 'Account email verified successfully.',
-                    'data': {
-                        'email': user.email,
-                        'is_verified': user.is_verified, 
-                        'access_token': str(refresh.access_token),
-                        'refresh_token': str(refresh),
-                        'message': 'This is user Token BY Send Backend'
+                    "status": "success",
+                    "message": "Email verified successfully.",
+                    "data": {
+                        "email": user.email,
+                        "access_token": str(refresh.access_token),
+                        "refresh_token": str(refresh)
                     }
                 }, status=status.HTTP_200_OK)
 
-            return Response({'message': 'User is already verified.'}, status=status.HTTP_204_NO_CONTENT)
+            except User.DoesNotExist:
+                return Response({
+                    "status": "failure",
+                    "message": "User not found."
+                }, status=status.HTTP_400_BAD_REQUEST)
 
-        except OneTimePassword.DoesNotExist:
-            return Response({'message': 'Invalid passcode or OTP expired.'}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({
+            "status": "failure",
+            "message": "Invalid OTP."
+        }, status=status.HTTP_400_BAD_REQUEST)
+
+class ResendOTPView(APIView):
+    permission_classes = [AllowAny]
+
+    @method_decorator(ratelimit(key='user', rate='3/h', method='POST'))
+    def post(self, request):
+        email = request.data.get('email')
+
+        if not email:
+            return Response({
+                "status": "failure",
+                "message": "Email is required."
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            user = User.objects.get(email=email)
+        except User.DoesNotExist:
+            return Response({
+                "status": "failure",
+                "message": "User with this email does not exist."
+            }, status=status.HTTP_404_NOT_FOUND)
+
+        if user.is_verified:
+            return Response({
+                "status": "failure",
+                "message": "User is already verified."
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+
+        if send_generated_otp_to_email(email, request):
+            return Response({
+                "status": "success",
+                "message": "OTP resent to your email.",
+                "data": {"email": email}
+            }, status=status.HTTP_200_OK)
+        else:
+            return Response({
+                "status": "failure",
+                "message": "Failed to resend OTP."
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 class AdditionalUserDetailsView(APIView):
@@ -142,23 +235,37 @@ class AdditionalUserDetailsView(APIView):
                 'status': 'error',
                 'message': 'Token has expired or is invalid. Please log in again.',
             }, status=status.HTTP_401_UNAUTHORIZED)
-        
 
 class LoginUserView(APIView):
     permission_classes = [AllowAny]
 
     def post(self, request):
-        
-        serializer = LoginSerializer(data=request.data, context={'request': request})
+        email = request.data.get('email')
+        password = request.data.get('password')
 
-        if serializer.is_valid():
-            return Response(
-                {
-                    'message' : 'You Are Login sucessfully.',
-                    'data' : serializer.validated_data
-                }, status=status.HTTP_200_OK)
+        user = User.objects.filter(email=email).first()
 
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        if not user or not user.check_password(password):
+            return Response({
+                "status": "failure",
+                "message": "Invalid credentials."
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+        if not user.is_verified:
+            return Response({
+                "status": "failure",
+                "message": "Email not verified."
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+        refresh = RefreshToken.for_user(user)
+        return Response({
+            "status": "success",
+            "message": "Login successful.",
+            "data": {
+                "access_token": str(refresh.access_token),
+                "refresh_token": str(refresh)
+            }
+        }, status=status.HTTP_200_OK)
 
 class PasswordResetRequestView(GenericAPIView):
     permission_classes = [AllowAny]
@@ -299,22 +406,37 @@ class CityFilterView(GenericAPIView):
         serializer = self.serializer_class(cities, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-class GoogleOauthSignInview(GenericAPIView):
-    serializer_class=GoogleSignInSerializer
 
+class GoogleSignInView(APIView):
+    def post(self, request, *args, **kwargs):
+        access_token = request.data.get("access_token")
+        id_token = request.data.get("id_token") 
+
+        if not access_token or not id_token:
+            return Response(
+                {"error": "Both access_token and id_token are required"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        user_data = register_social_user("google", access_token, id_token)  
+        return Response(user_data, status=status.HTTP_200_OK)
+
+
+
+class GoogleAuthView(APIView):
     def post(self, request):
-        print(request.data)
-        serializer=self.serializer_class(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        data=((serializer.validated_data)['access_token'])
-        return Response(data, status=status.HTTP_200_OK) 
+        return JsonResponse({"message": "Google Sign-in API working"})
+
+
+
+# class NetflixOauthSignInView(APIView):
+#     serializer_class = NetflixLoginSerializer
+
+#     def post(self, request):
+#         serializer = self.serializer_class(data=request.data)
+#         serializer.is_valid(raise_exception=True)
         
-class NetflixOauthSignInView(GenericAPIView):
-    serializer_class=NetflixLoginSerializer
+#         access_token = serializer.validated_data['code']
+#         user_data = register_social_user("netflix", access_token)
 
-    def post(self, request):
-        serializer=self.serializer_class(data=request.data)
-        if serializer.is_valid(raise_exception=True):
-            data=((serializer.validated_data)['code'])
-            return Response(data, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+#         return Response(user_data, status=status.HTTP_200_OK)
