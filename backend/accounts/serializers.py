@@ -1,25 +1,24 @@
-from accounts.google import Google, register_social_user
-from accounts.netflix import Netflix
+# from accounts.social import Netflix
 from accounts.models import User,City,State,Country
-from accounts.utils import send_normal_email
+from accounts.utils import send_normal_email 
+
 import json
 from dataclasses import field
-from rest_framework import serializers
-from rest_framework.response import Response
-from string import ascii_lowercase, ascii_uppercase
+
 from django.contrib.auth import authenticate
-from rest_framework.exceptions import AuthenticationFailed
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.utils.encoding import smart_str, force_str, smart_bytes
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from django.contrib.sites.shortcuts import get_current_site
 from django.urls import reverse
+
+from rest_framework import serializers
+from rest_framework.response import Response
+from rest_framework.exceptions import AuthenticationFailed
 from rest_framework_simplejwt.tokens import RefreshToken, TokenError
 from rest_framework_simplejwt.exceptions import TokenError, InvalidToken
 from rest_framework import status
 
-# print(RefreshToken)
-# print(TokenError)
 
 class CitySerializer(serializers.ModelSerializer):
     class Meta:
@@ -49,8 +48,10 @@ class UserRegisterSerializer(serializers.ModelSerializer):
             password=validated_data.get('password'),
             tc = validated_data.get('tc')
             )
+
         return user
-    
+
+
 
 class AdditionalUserDetailsSerializer(serializers.ModelSerializer):
     city_id = serializers.PrimaryKeyRelatedField(
@@ -240,44 +241,19 @@ class LogoutUserSerializer(serializers.Serializer):
             return self.fail('bad_token')
 
 class GoogleSignInSerializer(serializers.Serializer):
-    access_token=serializers.CharField(min_length=6)
+    access_token = serializers.CharField(min_length=6)
 
 
-    def validate_access_token(self, access_token):
-        user_data=Google.validate(access_token)
-        try:
-            user_data['sub']
-            
-        except:
-            raise serializers.ValidationError("this token has expired or invalid please try again")
-        
-        if user_data['aud'] != settings.GOOGLE_CLIENT_ID:
-                raise AuthenticationFailed('Could not verify user.')
+# class NetflixLoginSerializer(serializers.Serializer):
+#     code = serializers.CharField()
 
-        user_id=user_data['sub']
-        email=user_data['email']
-        first_name=user_data['given_name']
-        last_name=user_data['family_name']
-        provider='google'
-
-        return register_social_user(provider, email, first_name, last_name)
+#     def validate_code(self, code):
+#         access_token = Netflix.exchange_code_for_token(code)
+#         if not access_token:
+#             raise serializers.ValidationError("Invalid or expired Netflix token")
+#         return access_token
 
 
-class NetflixLoginSerializer(serializers.Serializer):
-    code = serializers.CharField()
 
-    def validate_code(self, code):   
-        access_token = Netflix.exchange_code_for_token(code)
-
-        if access_token:
-            user_data=Netflix.get_github_user(access_token)
-
-            full_name=user_data['name']
-            email=user_data['email']
-            names=full_name.split(" ")
-            firstName=names[1]
-            lastName=names[0]
-            provider='github'
-            return register_social_user(provider, email, firstName, lastName)
 
         
