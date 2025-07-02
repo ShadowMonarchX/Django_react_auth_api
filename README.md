@@ -1,6 +1,5 @@
 ---
 
-markdown
 # 🔐 Django + React Authentication API
 
 A full-stack authentication system built using Django (REST Framework) on the backend and React on the frontend. It uses **JWT tokens** for secure authentication, supports user registration, login, logout, and protected routes.
