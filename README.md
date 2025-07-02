@@ -29,7 +29,7 @@ Django\_react\_auth\_api/
 │   ├── api/                  # Main app with views, urls, models
 │   ├── manage.py
 │   └── requirements.txt
-├── frontend/
+├── my-react-app/
 │   ├── public/
 │   ├── src/
 │   │   ├── components/       # Login, Register, Dashboard
